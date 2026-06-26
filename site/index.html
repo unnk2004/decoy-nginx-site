@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulsewatch — Infrastructure Monitoring</title>
+<meta name="description" content="Real-time uptime and latency monitoring for distributed infrastructure. Pulsewatch watches your nodes so you don't have to.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230B0E14'/><path d='M4 18h5l3-9 5 16 3-12 2 5h6' stroke='%233DDC84' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#11151F"/><path d="M4 18h5l3-9 5 16 3-12 2 5h6" stroke="#3DDC84" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      pulsewatch
+    </div>
+    <div class="nav-links">
+      <a href="/#platform">Platform</a>
+      <a href="/#how">How it works</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/docs.html">Docs</a>
+      <a href="/status.html">Status</a>
+    </div>
+    <a class="nav-cta" href="/pricing.html">Start monitoring →</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> ALL SYSTEMS OPERATIONAL · 247 NODES TRACKED</div>
+      <h1>Know your infrastructure<br>is down <span class="accent">before your customers do.</span></h1>
+      <p class="hero-sub">Pulsewatch checks every endpoint from twelve regions, every fifteen seconds, and pages your on-call the moment something drifts from baseline — not after the support tickets pile up.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary">Start free monitor</button>
+        <button class="btn btn-ghost">View live demo</button>
+      </div>
+      <div class="trust-row">
+        <span>⬩ 99.97% checker uptime</span>
+        <span>⬩ &lt;200ms median alert latency</span>
+        <span>⬩ SOC 2 in progress</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="traffic-lights"><span></span><span></span><span></span></div>
+        <div class="panel-title">checks.pulsewatch.io / fra-edge-03</div>
+        <div class="panel-live"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span> LIVE</div>
+      </div>
+      <div class="panel-body">
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-label">Avg latency</div>
+            <div class="metric-value green" id="metric-latency">38ms</div>
+            <div class="metric-delta" id="metric-latency-delta">−4ms vs. 1h avg</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Uptime (30d)</div>
+            <div class="metric-value">99.98%</div>
+            <div class="metric-delta">12 checks failed / 86,400</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Active incidents</div>
+            <div class="metric-value">0</div>
+            <div class="metric-delta">last: 6d 14h ago</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="chart-label-row"><span>RESPONSE TIME — LAST 60 MIN</span><span id="chart-now">now</span></div>
+          <svg class="sparkline" id="sparkline" viewBox="0 0 600 64" preserveAspectRatio="none"></svg>
+        </div>
+
+        <div class="node-list">
+          <div class="node-row"><span class="node-status up"></span><span class="node-name">api-gateway</span><span class="node-region">fra1</span><span class="node-latency">31ms</span></div>
+          <div class="node-row"><span class="node-status up"></span><span class="node-name">auth-service</span><span class="node-region">fra1</span><span class="node-latency">27ms</span></div>
+          <div class="node-row"><span class="node-status warn"></span><span class="node-name">events-worker</span><span class="node-region">ams3</span><span class="node-latency">142ms</span></div>
+          <div class="node-row"><span class="node-status up"></span><span class="node-name">cdn-origin</span><span class="node-region">fra1</span><span class="node-latency">19ms</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="logos">
+  <div class="wrap">
+    <div class="logos-label">TRUSTED BY ENGINEERING TEAMS AT</div>
+    <div class="logos-row">
+      <span class="logo-item">NORDFRACHT</span>
+      <span class="logo-item">veloCore</span>
+      <span class="logo-item">Bastion Cloud</span>
+      <span class="logo-item">LIEFERKETTE.IO</span>
+      <span class="logo-item">Hallwerk</span>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="platform">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">PLATFORM</div>
+      <div class="section-title">Three signals, checked everywhere, all the time.</div>
+      <div class="section-desc">Pulsewatch doesn't just ping a port. It watches the shape of your traffic over time and tells you when something is genuinely wrong — not when a single probe had a bad second.</div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 2-9 2 5h4"/></svg>
+        <div class="feature-title">Latency baselines</div>
+        <div class="feature-text">We learn the normal rhythm of every endpoint and alert on deviation, not on a fixed threshold that's wrong half the time.</div>
+      </div>
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>
+        <div class="feature-title">15-second checks</div>
+        <div class="feature-text">Twelve check regions, fifteen-second intervals by default. Most outages are caught and paged before the first user notices.</div>
+      </div>
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg>
+        <div class="feature-title">Status pages that don't lie</div>
+        <div class="feature-text">Public status pages pull from the same data your on-call sees — no manual incident updates, no stale "investigating" banners.</div>
+      </div>
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v4H4zM4 10h10v4H4zM4 16h7v4H4z"/></svg>
+        <div class="feature-title">Structured incident logs</div>
+        <div class="feature-text">Every alert comes with the request trail that triggered it, so the postmortem writes most of itself.</div>
+      </div>
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12a7 7 0 1014 0 7 7 0 00-14 0z"/><path d="M12 8v4l3 2"/></svg>
+        <div class="feature-title">On-call routing</div>
+        <div class="feature-text">Escalation policies with overrides, quiet hours, and a second pass to backup contacts if the first page goes unacknowledged.</div>
+      </div>
+      <div class="feature-card">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17l5-5-5-5M12 19h8"/></svg>
+        <div class="feature-title">API-first</div>
+        <div class="feature-text">Every check, alert, and status page is scriptable. Most teams manage their monitors entirely from Terraform.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">HOW IT WORKS</div>
+      <div class="section-title">Set up in the time it takes to read this.</div>
+      <div class="section-desc">No agents to install on production. No sidecars. Point a check at a URL or a TCP port and Pulsewatch handles the rest.</div>
+    </div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-title">Add an endpoint</div>
+        <div class="flow-text">Paste a URL, TCP port, or gRPC health check. Pick the regions you care about.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-title">We learn its baseline</div>
+        <div class="flow-text">A few hours of checks build a latency and availability profile specific to that endpoint.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-title">Route the alert</div>
+        <div class="flow-text">Slack, PagerDuty, webhook, or plain email — pick where deviations should land and for whom.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-title">Watch it run</div>
+        <div class="flow-text">A live dashboard and a public status page, both reading from the same stream of checks.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">PRICING</div>
+      <div class="section-title">Pay for endpoints, not seats.</div>
+      <div class="section-desc">Every plan includes unlimited team members. You only scale spend when your infrastructure grows.</div>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tag">STARTER</div>
+        <div class="price-name">For side projects</div>
+        <div class="price-amount">€0<span>/mo</span></div>
+        <div class="price-desc">5 endpoints, 5-minute intervals, community support.</div>
+        <ul class="price-list">
+          <li>5 monitored endpoints</li>
+          <li>3 check regions</li>
+          <li>Email alerts</li>
+          <li>7-day history</li>
+        </ul>
+        <a class="price-btn" href="#">Start free</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tag">TEAM</div>
+        <div class="price-name">For production fleets</div>
+        <div class="price-amount">€39<span>/mo</span></div>
+        <div class="price-desc">50 endpoints, 15-second intervals, full routing.</div>
+        <ul class="price-list">
+          <li>50 monitored endpoints</li>
+          <li>12 check regions</li>
+          <li>Slack, PagerDuty, webhooks</li>
+          <li>90-day history</li>
+          <li>Public status pages</li>
+        </ul>
+        <a class="price-btn primary" href="#">Start trial</a>
+      </div>
+      <div class="price-card">
+        <div class="price-tag">SCALE</div>
+        <div class="price-name">For platform teams</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-desc">Unlimited endpoints, dedicated check capacity, SSO.</div>
+        <ul class="price-list">
+          <li>Unlimited endpoints</li>
+          <li>Dedicated check regions</li>
+          <li>SSO / SAML</li>
+          <li>Unlimited history</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="price-btn" href="#">Talk to us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#11151F"/><path d="M4 18h5l3-9 5 16 3-12 2 5h6" stroke="#3DDC84" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          pulsewatch
+        </div>
+        <p>Infrastructure monitoring built by engineers who got tired of finding out about outages from Twitter. Operated from Frankfurt, checking from twelve regions.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>PRODUCT</h4>
+          <a href="/#platform">Platform</a>
+          <a href="/pricing.html">Pricing</a>
+          <a href="/docs.html">API docs</a>
+          <a href="/status.html">Status page</a>
+        </div>
+        <div class="footer-col">
+          <h4>COMPANY</h4>
+          <a href="/about.html">About</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/careers.html">Careers</a>
+        </div>
+        <div class="footer-col">
+          <h4>LEGAL</h4>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+          <a href="/imprint.html">Impressum</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pulsewatch GmbH, Frankfurt am Main</span>
+      <span class="footer-status"><span class="dot"></span> All systems operational</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Live-looking sparkline + metric updates — purely cosmetic, client-side only.
+  (function(){
+    const svg = document.getElementById('sparkline');
+    const W = 600, H = 64, POINTS = 48;
+    let data = Array.from({length: POINTS}, () => 28 + Math.random() * 14);
+
+    function render(){
+      const max = Math.max(...data) + 6;
+      const min = Math.min(...data) - 6;
+      const range = Math.max(max - min, 1);
+      const step = W / (POINTS - 1);
+
+      let path = '';
+      data.forEach((v, i) => {
+        const x = i * step;
+        const y = H - ((v - min) / range) * H;
+        path += (i === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : ` L${x.toFixed(1)},${y.toFixed(1)}`);
+      });
+
+      const areaPath = path + ` L${W},${H} L0,${H} Z`;
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3DDC84" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#3DDC84" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="${areaPath}" fill="url(#grad)" stroke="none"/>
+        <path d="${path}" fill="none" stroke="#3DDC84" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+      `;
+    }
+
+    function tick(){
+      data.shift();
+      const last = data[data.length - 1];
+      let next = last + (Math.random() - 0.5) * 6;
+      next = Math.max(20, Math.min(60, next));
+      data.push(next);
+      render();
+
+      const latencyEl = document.getElementById('metric-latency');
+      const deltaEl = document.getElementById('metric-latency-delta');
+      if (latencyEl) {
+        const rounded = Math.round(next);
+        latencyEl.textContent = rounded + 'ms';
+        const diff = Math.round(next - 38);
+        deltaEl.textContent = (diff >= 0 ? '+' : '') + diff + 'ms vs. 1h avg';
+      }
+    }
+
+    render();
+    setInterval(tick, 2600);
+
+    // subtle "now" timestamp ticker
+    const nowEl = document.getElementById('chart-now');
+    function updateClock(){
+      if (!nowEl) return;
+      const d = new Date();
+      nowEl.textContent = d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  })();
+</script>
+
+</body>
+</html>

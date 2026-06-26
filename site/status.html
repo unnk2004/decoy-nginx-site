@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Status — Pulsewatch</title>
+<meta name="description" content="Live status of Pulsewatch services and check infrastructure.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230B0E14'/><path d='M4 18h5l3-9 5 16 3-12 2 5h6' stroke='%233DDC84' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a href="/" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#11151F"/><path d="M4 18h5l3-9 5 16 3-12 2 5h6" stroke="#3DDC84" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      pulsewatch
+    </a>
+    <div class="nav-links">
+      <a href="/#platform">Platform</a>
+      <a href="/#how">How it works</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/docs.html">Docs</a>
+      <a href="/status.html">Status</a>
+    </div>
+    <a class="nav-cta" href="/pricing.html">Start monitoring →</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="wrap">
+    <div class="page-title">System status</div>
+    <div class="page-sub">Live status of the Pulsewatch check network and dashboard. This page updates automatically — no need to refresh.</div>
+  </div>
+</header>
+
+<section class="page-body">
+  <div class="wrap" style="max-width:760px;">
+
+    <div class="status-banner">
+      <span class="dot"></span>
+      <div>
+        <div class="status-banner-text">All systems operational</div>
+        <div class="status-banner-sub" id="status-updated">Updated a few seconds ago</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:40px;">
+      <div class="status-service-row">
+        <div><span class="status-service-name">Check network</span><span class="status-service-region">12 regions</span></div>
+        <span class="status-pill ok"><span class="dot"></span>Operational</span>
+      </div>
+      <div class="status-service-row">
+        <div><span class="status-service-name">Dashboard</span><span class="status-service-region">app.pulsewatch.io</span></div>
+        <span class="status-pill ok"><span class="dot"></span>Operational</span>
+      </div>
+      <div class="status-service-row">
+        <div><span class="status-service-name">REST API</span><span class="status-service-region">api.pulsewatch.io</span></div>
+        <span class="status-pill ok"><span class="dot"></span>Operational</span>
+      </div>
+      <div class="status-service-row">
+        <div><span class="status-service-name">Alert delivery</span><span class="status-service-region">Slack, PagerDuty, webhooks</span></div>
+        <span class="status-pill ok"><span class="dot"></span>Operational</span>
+      </div>
+      <div class="status-service-row">
+        <div><span class="status-service-name">Public status pages</span><span class="status-service-region">edge-rendered</span></div>
+        <span class="status-pill degraded"><span class="dot"></span>Degraded performance</span>
+      </div>
+    </div>
+
+    <h2 style="font-size:18px;color:#fff;margin-bottom:14px;">90-day history</h2>
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-bottom:6px;">
+        <span>90 days ago</span><span id="uptime-pct">99.96% uptime</span><span>today</span>
+      </div>
+      <div class="uptime-bar" id="uptime-bar"></div>
+    </div>
+
+    <h2 style="font-size:18px;color:#fff;margin-bottom:14px;">Recent incidents</h2>
+
+    <div class="incident-card">
+      <div class="incident-date">JUN 20, 2026 · 14:32–14:51 UTC</div>
+      <div class="incident-title">Elevated latency on public status pages</div>
+      <div class="incident-text">A caching regression on our edge layer caused public status pages to serve stale data for up to 90 seconds. Dashboard and alerting were not affected. Resolved by rolling back the edge cache config.</div>
+    </div>
+
+    <div class="incident-card">
+      <div class="incident-date">JUN 11, 2026 · 03:08–03:14 UTC</div>
+      <div class="incident-title">Brief check delay in ams3 region</div>
+      <div class="incident-text">The Amsterdam check region missed two scheduled probe cycles due to a scheduler restart. No alerts were dropped; checks resumed automatically.</div>
+    </div>
+
+    <div class="incident-card">
+      <div class="incident-date">MAY 29, 2026 · 19:45–20:30 UTC</div>
+      <div class="incident-title">Slack alert delivery delay</div>
+      <div class="incident-text">Slack's incoming webhook API rate-limited a batch of alert deliveries during a traffic spike. Webhook and PagerDuty delivery were unaffected. We've since added exponential backoff for this integration.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#11151F"/><path d="M4 18h5l3-9 5 16 3-12 2 5h6" stroke="#3DDC84" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          pulsewatch
+        </a>
+        <p>Infrastructure monitoring built by engineers who got tired of finding out about outages from Twitter. Operated from Frankfurt, checking from twelve regions.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>PRODUCT</h4>
+          <a href="/#platform">Platform</a>
+          <a href="/pricing.html">Pricing</a>
+          <a href="/docs.html">API docs</a>
+          <a href="/status.html">Status page</a>
+        </div>
+        <div class="footer-col">
+          <h4>COMPANY</h4>
+          <a href="/about.html">About</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/careers.html">Careers</a>
+        </div>
+        <div class="footer-col">
+          <h4>LEGAL</h4>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+          <a href="/imprint.html">Impressum</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pulsewatch GmbH, Frankfurt am Main</span>
+      <span class="footer-status"><span class="dot"></span> All systems operational</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    // 90-day uptime bar — generate once, mostly green with a couple of dips
+    const bar = document.getElementById('uptime-bar');
+    const days = 90;
+    let html = '';
+    for (let i = 0; i < days; i++){
+      let cls = '';
+      if (i === 19 || i === 64 || i === 78) cls = 'warn';
+      html += `<span class="${cls}"></span>`;
+    }
+    bar.innerHTML = html;
+
+    // relative "updated X seconds ago" ticker
+    let seconds = 0;
+    const updatedEl = document.getElementById('status-updated');
+    setInterval(() => {
+      seconds += 5;
+      if (seconds < 60) updatedEl.textContent = `Updated ${seconds} seconds ago`;
+      else updatedEl.textContent = `Updated ${Math.floor(seconds/60)} min ago`;
+    }, 5000);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docs — Pulsewatch</title>
+<meta name="description" content="Pulsewatch API documentation. Manage checks, alerts, and status pages programmatically.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230B0E14'/><path d='M4 18h5l3-9 5 16 3-12 2 5h6' stroke='%233DDC84' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a href="/" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#11151F"/><path d="M4 18h5l3-9 5 16 3-12 2 5h6" stroke="#3DDC84" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      pulsewatch
+    </a>
+    <div class="nav-links">
+      <a href="/#platform">Platform</a>
+      <a href="/#how">How it works</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/docs.html">Docs</a>
+      <a href="/status.html">Status</a>
+    </div>
+    <a class="nav-cta" href="/pricing.html">Start monitoring →</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="wrap">
+    <div class="page-title">Documentation</div>
+    <div class="page-sub">Everything runs through one REST API. The dashboard is just a client of it — anything you can click, you can script.</div>
+  </div>
+</header>
+
+<section class="page-body">
+  <div class="wrap docs-grid">
+    <nav class="docs-nav">
+      <div class="docs-nav-group">
+        <h5>GETTING STARTED</h5>
+        <a href="#auth" class="active">Authentication</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#regions">Check regions</a>
+      </div>
+      <div class="docs-nav-group">
+        <h5>RESOURCES</h5>
+        <a href="#checks">Checks</a>
+        <a href="#alerts">Alert policies</a>
+        <a href="#status-pages">Status pages</a>
+      </div>
+      <div class="docs-nav-group">
+        <h5>REFERENCE</h5>
+        <a href="#rate-limits">Rate limits</a>
+        <a href="#webhooks">Webhooks</a>
+        <a href="#errors">Error codes</a>
+      </div>
+    </nav>
+
+    <div>
+      <h2 id="auth" style="margin-top:0;">Authentication</h2>
+      <p>All requests are authenticated with a bearer token tied to your workspace. Generate a key from the dashboard under Settings → API Keys.</p>
+      <pre>curl https://api.pulsewatch.io/v1/checks \
+  -H "Authorization: Bearer pw_live_xxxxxxxxxxxxxxxx"</pre>
+      <p>Keys are scoped to a workspace and inherit the permissions of the member who created them. Service-level keys for CI pipelines can be created separately under Settings → Service Accounts.</p>
+
+      <h2 id="quickstart">Quickstart</h2>
+      <p>Creating a check takes one request. Pulsewatch starts probing within a few seconds of creation, from the regions you specify.</p>
+      <pre>curl -X POST https://api.pulsewatch.io/v1/checks \
+  -H "Authorization: Bearer pw_live_xxxxxxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "api-gateway",
+    "url": "https://api.example.com/healthz",
+    "interval_seconds": 15,
+    "regions": ["fra1", "ams3", "lhr1"]
+  }'</pre>
+      <p>The response includes a <code>check_id</code> you'll use to fetch results, update the configuration, or attach an alert policy.</p>
+
+      <h2 id="regions">Check regions</h2>
+      <p>Checks run from twelve regions across three continents. You can restrict a check to a subset of regions, or let Pulsewatch pick the three closest to your endpoint automatically.</p>
+      <ul>
+        <li><code>fra1</code> — Frankfurt, DE</li>
+        <li><code>ams3</code> — Amsterdam, NL</li>
+        <li><code>lhr1</code> — London, UK</li>
+        <li><code>par2</code> — Paris, FR</li>
+        <li><code>sto1</code> — Stockholm, SE</li>
+        <li>+ 7 additional regions, listed in the dashboard</li>
+      </ul>
+
+      <h2 id="checks">Checks</h2>
+      <p>A check represents one monitored endpoint. Supported check types: <code>http</code>, <code>tcp</code>, <code>grpc_health</code>, and <code>icmp</code>. Each check type accepts its own configuration block — see the full schema in the API reference.</p>
+
+      <h2 id="alerts">Alert policies</h2>
+      <p>Alert policies define who gets paged, in what order, and after how many consecutive failures. Policies attach to one or more checks and support escalation chains with timeouts between steps.</p>
+
+      <h2 id="status-pages">Status pages</h2>
+      <p>Public status pages read directly from check results — there is no separate "update status" action. Incidents are created automatically when a check policy trips, and resolved automatically when it recovers.</p>
+
+      <h2 id="rate-limits">Rate limits</h2>
+      <p>The API allows 300 requests per minute per workspace, with a burst allowance of 50. Check creation is additionally capped at 20 per minute to protect probe scheduling.</p>
+
+      <h2 id="webhooks">Webhooks</h2>
+      <p>Webhook payloads are signed with HMAC-SHA256 using a per-endpoint secret, included as the <code>X-Pulsewatch-Signature</code> header. Verify it before processing the payload.</p>
+
+      <h2 id="errors">Error codes</h2>
+      <p>Errors follow a consistent shape: <code>{"error": {"code": "...", "message": "..."}}</code>. Common codes include <code>invalid_request</code>, <code>rate_limited</code>, and <code>endpoint_limit_reached</code>.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#11151F"/><path d="M4 18h5l3-9 5 16 3-12 2 5h6" stroke="#3DDC84" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          pulsewatch
+        </a>
+        <p>Infrastructure monitoring built by engineers who got tired of finding out about outages from Twitter. Operated from Frankfurt, checking from twelve regions.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>PRODUCT</h4>
+          <a href="/#platform">Platform</a>
+          <a href="/pricing.html">Pricing</a>
+          <a href="/docs.html">API docs</a>
+          <a href="/status.html">Status page</a>
+        </div>
+        <div class="footer-col">
+          <h4>COMPANY</h4>
+          <a href="/about.html">About</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/careers.html">Careers</a>
+        </div>
+        <div class="footer-col">
+          <h4>LEGAL</h4>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+          <a href="/imprint.html">Impressum</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pulsewatch GmbH, Frankfurt am Main</span>
+      <span class="footer-status"><span class="dot"></span> All systems operational</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
