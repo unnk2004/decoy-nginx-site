@@ -76,11 +76,31 @@ fi
 systemctl enable nginx >/dev/null 2>&1 || true
 
 # ---------------------------------------------------------------------------
+# 3b. Detect nginx version to pick the right http2 syntax
+#     http2 >= 1.25.1  -> standalone "http2 on;" directive
+#     http2 <  1.25.1  -> combined "listen ... ssl http2;" syntax
+# ---------------------------------------------------------------------------
+NGINX_VERSION=$(nginx -v 2>&1 | sed -n 's#.*nginx/\([0-9.]*\).*#\1#p')
+USE_NEW_HTTP2_SYNTAX=false
+if [[ -n "$NGINX_VERSION" ]]; then
+    IFS='.' read -r NV_MAJOR NV_MINOR NV_PATCH <<< "$NGINX_VERSION"
+    # Compare to 1.25.1
+    if (( NV_MAJOR > 1 )) || \
+       { (( NV_MAJOR == 1 )) && (( NV_MINOR > 25 )); } || \
+       { (( NV_MAJOR == 1 )) && (( NV_MINOR == 25 )) && (( NV_PATCH >= 1 )); }; then
+        USE_NEW_HTTP2_SYNTAX=true
+    fi
+fi
+echo "Detected nginx version: ${NGINX_VERSION:-unknown} (new http2 syntax: ${USE_NEW_HTTP2_SYNTAX})"
+
+# ---------------------------------------------------------------------------
 # 4. Back up and wipe existing nginx site configuration
+#    NOTE: copy the *contents* of /etc/nginx into BACKUP_DIR (trailing /.)
+#    so BACKUP_DIR itself mirrors /etc/nginx directly — no extra nesting.
 # ---------------------------------------------------------------------------
 BACKUP_DIR="/root/nginx-backup-$(date +%Y%m%d%H%M%S)"
 mkdir -p "$BACKUP_DIR"
-cp -r /etc/nginx "$BACKUP_DIR" 2>/dev/null || true
+cp -r /etc/nginx/. "$BACKUP_DIR"/ 2>/dev/null || true
 echo "Full backup of /etc/nginx saved to: $BACKUP_DIR"
 
 rm -f /etc/nginx/sites-enabled/*
@@ -137,6 +157,15 @@ fi
 # ---------------------------------------------------------------------------
 CONF_FILE="/etc/nginx/sites-available/${DOMAIN}.conf"
 
+if [[ "$USE_NEW_HTTP2_SYNTAX" == "true" ]]; then
+    LISTEN_443_BLOCK="    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;"
+else
+    LISTEN_443_BLOCK="    listen 443 ssl http2;
+    listen [::]:443 ssl http2;"
+fi
+
 cat > "$CONF_FILE" <<EOF
 # Redirect plain HTTP to HTTPS
 server {
@@ -147,9 +176,7 @@ server {
 }
 
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    http2 on;
+${LISTEN_443_BLOCK}
     server_name ${DOMAIN};
 
     ssl_certificate     ${CERT_DIR}/fullchain.pem;
@@ -217,6 +244,9 @@ ln -sf "$CONF_FILE" "/etc/nginx/sites-enabled/${DOMAIN}.conf"
 
 # ---------------------------------------------------------------------------
 # 8. Test and reload
+#    NOTE: restore by copying BACKUP_DIR's *contents* back into /etc/nginx
+#    (trailing /.) to match how the backup was taken in step 4 — avoids the
+#    double-nesting bug that left /etc/nginx/nginx.conf missing.
 # ---------------------------------------------------------------------------
 echo
 echo "Testing nginx configuration..."
@@ -226,7 +256,8 @@ if nginx -t; then
 else
     echo "nginx config test FAILED — restoring previous configuration."
     rm -rf /etc/nginx
-    cp -r "$BACKUP_DIR" /etc/nginx
+    mkdir -p /etc/nginx
+    cp -r "$BACKUP_DIR"/. /etc/nginx/
     nginx -t && systemctl reload nginx
     exit 1
 fi
